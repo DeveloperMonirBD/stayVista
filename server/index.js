@@ -49,6 +49,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
     try {
+        const roomsCollection = client.db('stayVista').collection('rooms');
         // auth related api
         app.post('/jwt', async (req, res) => {
             const user = req.body;
@@ -75,6 +76,20 @@ async function run() {
                 res.status(500).send(err);
             }
         });
+
+        // Get all rooms from the database
+        app.get('/rooms', async (req, res) => {
+            const rooms = await roomsCollection.find().toArray();
+            res.send(rooms);
+        });
+
+        // Get a single room by ID
+        app.get('/rooms/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const room = await roomsCollection.findOne(query);
+            res.send(room);
+        })
 
         // Send a ping to confirm a successful connection
         await client.db('admin').command({ ping: 1 });
