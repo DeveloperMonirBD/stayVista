@@ -5,23 +5,28 @@ import ErrorPage from '../pages/ErrorPage'
 import Login from '../pages/Login/Login'
 import SignUp from '../pages/SignUp/SignUp'
 import RoomDetails from '../pages/RoomDetails/RoomDetails'
+import PrivateRoute from './PrivateRoute'
 
 export const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <Main />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
+    {
         path: '/',
-        element: <Home />,
-      },
-      {
-        path: '/rooms/:id',
-        element: <RoomDetails />,
-      },
-    ],
-  },
-  { path: '/login', element: <Login /> },
-  { path: '/signup', element: <SignUp /> },
-])
+        element: <Main />,
+        errorElement: <ErrorPage />,
+        children: [
+            {
+                path: '/',
+                element: <Home />
+            },
+            {
+                path: '/rooms/:id',
+                element: (
+                    <PrivateRoute>
+                        <RoomDetails />
+                    </PrivateRoute>
+                )
+            }
+        ]
+    },
+    { path: '/login', element: <Login /> },
+    { path: '/signup', element: <SignUp /> }
+]);
