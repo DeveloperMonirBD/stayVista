@@ -5,6 +5,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
 import { TbFidgetSpinner } from 'react-icons/tb';
+import { imageUpload } from '../../api/utils';
 
 
 const SignUp = () => {
@@ -29,17 +30,19 @@ const SignUp = () => {
             setLoading(true);
 
             // 1 Upload image (only if file exists)
-            let imageUrl = '';
+            // let image_url = '';
 
-            if (formData) {
-                const uploadRes = await axios.post(`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API_KEY}`, formData);
+            // if (formData) {
+            //     const uploadRes = await axios.post(`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API_KEY}`, formData);
 
-                imageUrl = uploadRes?.data?.data?.display_url;
+            //     image_url = uploadRes?.data?.data?.display_url;
 
-                if (!imageUrl) {
-                    throw new Error('Image upload failed');
-                }
-            }
+            //     if (!image_url) {
+            //         throw new Error('Image upload failed');
+            //     }
+            // }
+
+            const image_url = await imageUpload(image);
 
             // 2 Create user
             const userCredential = await createUser(email, password);
@@ -48,7 +51,7 @@ const SignUp = () => {
             }
 
             // 3 Update profile
-            await updateUserProfile(name, imageUrl);
+            await updateUserProfile(name, image_url);
 
             navigate(from, { replace: true });
             toast.success('Signup successful 🎉');
