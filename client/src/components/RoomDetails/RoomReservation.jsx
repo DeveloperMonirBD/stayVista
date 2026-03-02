@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { DateRange } from 'react-date-range';
-import Button from '../Shared/Button/Button';
+import Button from '../Dashboard/Button/Button';
 
 const RoomReservation = ({ room }) => {
     const [state, setState] = useState([

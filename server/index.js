@@ -92,6 +92,29 @@ async function run() {
             res.send(rooms);
         });
 
+        // Get all rooms for host
+        app.get('/my-listings/:email', async (req, res) => {
+            const email = req.params.email;
+            let query = {'host.email' : email}
+            const rooms = await roomsCollection.find(query).toArray();
+            res.send(rooms);
+        });
+
+        // delete a room
+        app.delete('/room/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
+            const result = await roomsCollection.deleteOne(query);
+            res.send(result)
+        })
+
+        // Save a room data in db
+        app.post('/room', async (req, res) => {
+            const roomData = req.body;
+            const result = await roomsCollection.insertOne(roomData);
+            res.send(result)
+        })
+
         // Get a single room by ID
         app.get('/rooms/:id', async (req, res) => {
             const id = req.params.id;

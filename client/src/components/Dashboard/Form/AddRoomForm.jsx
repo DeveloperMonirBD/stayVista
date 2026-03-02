@@ -1,7 +1,8 @@
 import { DateRange } from 'react-date-range';
 import { categories } from '../../Categories/CategoriesData';
+import { TbFidgetSpinner } from 'react-icons/tb';
 
-const AddRoomForm = ({ dates, handleDates, handleSubmit, imagePreview, handleImage, imageText }) => {
+const AddRoomForm = ({ dates, handleDates, handleSubmit, imagePreview, handleImage, imageText, loading }) => {
     // const [state, setState] = useState([
     //     {
     //         startDate: new Date(),
@@ -97,7 +98,9 @@ const AddRoomForm = ({ dates, handleDates, handleSubmit, imagePreview, handleIma
                                 </div>
                             </div>
 
-                            <div className="h-16 w-16 object-cover overflow-hidden border-4 border-dotted border-gray-300 rounded-md">{imagePreview && <img src={imagePreview} />}</div>
+                            <div className="h-16 w-16 object-cover overflow-hidden border-4 border-dotted border-gray-300 rounded-md flex items-center justify-center">
+                                {imagePreview && <img className="h-full w-full object-cover rounded-md" src={imagePreview} />}
+                            </div>
                         </div>
 
                         <div className="flex justify-between gap-2">
@@ -173,8 +176,8 @@ const AddRoomForm = ({ dates, handleDates, handleSubmit, imagePreview, handleIma
                     </div>
                 </div>
 
-                <button type="submit" className="w-full p-3 mt-5 text-center font-medium text-white transition duration-200 rounded shadow-md bg-rose-500">
-                    Save & Continue
+                <button disabled={loading} type="submit" className="w-full p-3 mt-5 text-center font-medium text-white transition duration-200 rounded shadow-md bg-rose-500">
+                    {loading ? <TbFidgetSpinner className="animate-spin m-auto text-xl" /> : ' Save & Continue'}
                 </button>
             </form>
         </div>
