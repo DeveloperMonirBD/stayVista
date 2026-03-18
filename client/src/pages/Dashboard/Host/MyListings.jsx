@@ -19,7 +19,7 @@ const MyListings = () => {
         }
     });
 
-    // delete'
+    // delete
     const { mutateAsync } = useMutation({
         mutationFn: async (id) => {
             const { data } = await axiosSecure.delete(`/room/${id}`);

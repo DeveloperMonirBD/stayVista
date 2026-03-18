@@ -1,10 +1,10 @@
-import Container from '../../components/Shared/Container';
-import { Helmet } from 'react-helmet-async';
-import RoomReservation from '../../components/RoomDetails/RoomReservation';
-import Heading from '../../components/Shared/Heading';
 import { useQuery } from '@tanstack/react-query';
-import LoadingSpinner from '../../components/Shared/LoadingSpinner';
+import { Helmet } from 'react-helmet-async';
 import { useParams } from 'react-router-dom';
+import RoomReservation from '../../components/RoomDetails/RoomReservation';
+import Container from '../../components/Shared/Container';
+import Heading from '../../components/Shared/Heading';
+import LoadingSpinner from '../../components/Shared/LoadingSpinner';
 import useAxiosCommon from '../../hooks/useAxiosCommon';
 
 // single room object (Fake Data)

@@ -10,6 +10,8 @@ const RoomDataRow = ({ room, handleDelete }) => {
         setIsOpen(false);
     }
 
+    // for update modal
+
     return (
         <tr>
             <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
@@ -49,6 +51,7 @@ const RoomDataRow = ({ room, handleDelete }) => {
                     <span aria-hidden="true" className="absolute inset-0 bg-green-200 opacity-50 rounded-full"></span>
                     <span className="relative">Update</span>
                 </span>
+                
                 {/* Update Modal */}
             </td>
         </tr>
