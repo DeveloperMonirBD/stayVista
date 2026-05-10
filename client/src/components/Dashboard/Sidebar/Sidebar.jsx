@@ -1,17 +1,21 @@
 import { useState } from 'react';
 import { AiOutlineBars } from 'react-icons/ai';
-import { BsFillHouseAddFill, BsGraphUp } from 'react-icons/bs';
+import { BsGraphUp } from 'react-icons/bs';
 import { FcSettings } from 'react-icons/fc';
 import { GrLogout } from 'react-icons/gr';
-import { MdHomeWork } from 'react-icons/md';
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import useAuth from '../../../hooks/useAuth';
 import useRole from '../../../hooks/useRole';
+import AdminMenu from './Menu/AdminMenu';
+import GuestMenu from './Menu/GuestMenu';
+import HostMenu from './Menu/HostMenu';
 import MenuItem from './Menu/MenuItem';
+import ToggleBtn from '../../Shared/Button/ToggleBtn';
 
 const Sidebar = () => {
     const { logOut } = useAuth();
     const [isActive, setActive] = useState(true);
+    const [toggle, setToggle] = useState(true);
     const [role, isLoading] = useRole();
     console.log(role, isLoading);
 
@@ -19,6 +23,12 @@ const Sidebar = () => {
     const handleToggle = () => {
         setActive(!isActive);
     };
+
+    const toggleHandler = () => {
+        // console.log(event.target.checked)
+        setToggle(!toggle);
+    }
+
     return (
         <>
             {/* Mobile Screen Navbar */}
@@ -66,12 +76,11 @@ const Sidebar = () => {
                     {/* Nav Items */}
                     <div className="flex flex-col justify-between flex-1 mt-6">
                         {/* Conditional toggle button here.. */}
-
-                        {/*  Menu Items */}
+                        {role === 'host' && <ToggleBtn toggle={toggle} toggleHandler={toggleHandler} />}
                         <nav>
                             {/* Statistics */}
                             <MenuItem label="Statistics" address="/dashboard" icon={BsGraphUp} />
-                            
+
                             {/* <NavLink
                                 to="/dashboard"
                                 end
@@ -85,11 +94,9 @@ const Sidebar = () => {
                                 <span className="mx-4 font-medium">Statistics</span>
                             </NavLink> */}
 
-                            {/* Add Room */}
-                            <MenuItem label="Add Room" address="add-room" icon={BsFillHouseAddFill} />
-
-                            {/* My Listing */}
-                            <MenuItem label="My Listings" address="my-listings" icon={MdHomeWork} />
+                            {/* Menu Items */}
+                            {role === 'host' && toggle ? <HostMenu /> : <GuestMenu />}
+                            {role === 'admin' && <AdminMenu />}
                         </nav>
                     </div>
                 </div>
