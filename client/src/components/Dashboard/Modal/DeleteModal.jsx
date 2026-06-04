@@ -52,7 +52,9 @@ const DeleteModal = ({ closeModal, isOpen, handleDelete, id }) => {
 
 DeleteModal.propTypes = {
     closeModal: PropTypes.func,
-    isOpen: PropTypes.bool
+    isOpen: PropTypes.bool,
+    handleDelete: PropTypes.func,
+    id: PropTypes.string
 };
 
 export default DeleteModal;

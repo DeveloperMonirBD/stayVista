@@ -6,6 +6,8 @@ const cookieParser = require('cookie-parser');
 const { MongoClient, ServerApiVersion, ObjectId, Timestamp } = require('mongodb');
 const jwt = require('jsonwebtoken');
 
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
 const port = process.env.PORT || 8000;
 
 // middleware
@@ -49,8 +51,10 @@ const client = new MongoClient(uri, {
 
 async function run() {
     try {
-        const roomsCollection = client.db('stayVista').collection('rooms');
-        const usersCollection = client.db('stayVista').collection('users');
+        const db = client.db('stayVista');
+        const roomsCollection = db.collection('rooms');
+        const usersCollection = db.collection('users');
+        const bookingsCollection = db.collection('bookings');
 
         // verify admin middleware
         const verifyAdmin = async (req, res, next) => {
@@ -103,6 +107,26 @@ async function run() {
             } catch (err) {
                 res.status(500).send(err);
             }
+        });
+
+        // create-payment-intent
+        app.post('/create-payment-intent', verifyToken, async (req, res) => {
+            const price = req.body.price;
+            const priceInCent = parseFloat(price) * 100;
+
+            if (!price || priceInCent < 1) return;
+
+            // generate clientSecret
+            const { client_secret } = await stripe.paymentIntents.create({
+                amount: priceInCent,
+                currency: 'usd',
+                automatic_payment_methods: {
+                    enabled: true
+                }
+            });
+
+            // send client secret as response
+            res.send({ clientSecret: client_secret });
         });
 
         // Get all rooms from the database
@@ -213,6 +237,63 @@ async function run() {
             const query = { _id: new ObjectId(id) };
             const room = await roomsCollection.findOne(query);
             res.send(room);
+        });
+
+        // Save a booking data in db
+        app.post('/booking', verifyToken, async (req, res) => {
+            const bookingData = req.body;
+            // save room booking info
+            const result = await bookingsCollection.insertOne(bookingData);
+
+            // // change room availability status
+            // const roomId = bookingData.roomId;
+            // const query = { _id: new ObjectId(roomId) }
+            // const updateDoc = {
+            //     $set: {booked: true}
+            // }
+            // const updatedRoom = await roomsCollection.updateOne(query, updateDoc);
+            // console.log(updatedRoom)
+
+            // res.send({result, updatedRoom});
+            res.send(result);
+        });
+
+        // update rooms status optional
+        app.patch('/room/status/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body.status;
+            const query = { _id: new ObjectId(id) };
+
+            const updateDoc = {
+                $set: { booked: status }
+            };
+            const result = await roomsCollection.updateOne(query, updateDoc);
+            res.send(result);
+        });
+
+        // get all booking for a guest
+        app.get('/my-bookings/:email', verifyToken, async (req, res) => {
+            const email = req.params.email;
+            const query = { 'guest.email': email };
+            const result = await bookingsCollection.find(query).toArray();
+            res.send(result);
+        });
+
+        // get all booking for a host
+        app.get('/manage-bookings/:email', verifyToken, verifyHost, async (req, res) => {
+            const email = req.params.email;
+            const query = { 'host.email': email };
+            const result = await bookingsCollection.find(query).toArray();
+            console.log(result);
+            res.send(result);
+        });
+
+        // delete a booking
+        app.delete('/booking/:id', verifyToken, async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await bookingsCollection.deleteOne(query);
+            res.send(result);
         });
 
         // Send a ping to confirm a successful connection

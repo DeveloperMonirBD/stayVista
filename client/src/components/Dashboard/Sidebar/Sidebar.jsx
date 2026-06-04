@@ -6,18 +6,17 @@ import { GrLogout } from 'react-icons/gr';
 import { Link } from 'react-router-dom';
 import useAuth from '../../../hooks/useAuth';
 import useRole from '../../../hooks/useRole';
+import ToggleBtn from '../../Shared/Button/ToggleBtn';
 import AdminMenu from './Menu/AdminMenu';
 import GuestMenu from './Menu/GuestMenu';
 import HostMenu from './Menu/HostMenu';
 import MenuItem from './Menu/MenuItem';
-import ToggleBtn from '../../Shared/Button/ToggleBtn';
 
 const Sidebar = () => {
     const { logOut } = useAuth();
     const [isActive, setActive] = useState(true);
     const [toggle, setToggle] = useState(true);
     const [role, isLoading] = useRole();
-    console.log(role, isLoading);
 
     // Sidebar Responsive Handler
     const handleToggle = () => {
@@ -27,7 +26,7 @@ const Sidebar = () => {
     const toggleHandler = () => {
         // console.log(event.target.checked)
         setToggle(!toggle);
-    }
+    };
 
     return (
         <>
