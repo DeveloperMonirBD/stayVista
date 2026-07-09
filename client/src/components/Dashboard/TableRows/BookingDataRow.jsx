@@ -13,6 +13,7 @@ const BookingDataRow = ({ booking, refetch }) => {
         setIsOpen(false);
     };
 
+    // delete
     const { mutateAsync } = useMutation({
         mutationFn: async id => {
             const { data } = await axiosSecure.delete(`/booking/${id}`);

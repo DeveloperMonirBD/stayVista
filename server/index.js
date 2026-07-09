@@ -296,6 +296,53 @@ async function run() {
             res.send(result);
         });
 
+        // admin Statistics
+        app.get('/admin-stat', verifyToken, verifyAdmin, async (req, res) => {
+            const bookingDetails = await bookingsCollection.find(
+                {},
+                {
+                    projection: {
+                        date: 1,
+                        price: 1
+                    }
+                }
+            ).toArray();
+
+            const totalUsers = await usersCollection.countDocuments();
+            const totalRooms = await roomsCollection.countDocuments();
+            const totalBookings = await bookingsCollection.countDocuments();
+            const totalSales = bookingDetails.reduce((acc, booking) => acc + booking.price, 0);
+
+            // export const data = [
+            //     ['Day', 'Sales'],
+            //     ['9', 1000],
+            //     ['10', 1170],
+            //     ['11', 660],
+            //     ['12', 1030]
+            // ];
+
+            const chartData = bookingDetails.map(booking => {
+                const day = new Date(booking.date).getDate();
+                const month = new Date(booking.date).getMonth() + 1;
+                const data = [`${day}/${month}`, booking?.price];
+                return data;
+            });
+            
+            chartData.unshift(['Day', 'Sales']);
+            // chartData.splice(0, 0, ['Day', 'Sales']);
+
+
+            console.log(chartData);
+            
+            res.send({
+                totalUsers,
+                totalRooms,
+                totalBookings,
+                totalSales,
+                chartData
+            })
+        });
+
         // Send a ping to confirm a successful connection
         await client.db('admin').command({ ping: 1 });
         console.log('Pinged your deployment. You successfully connected to MongoDB!');
